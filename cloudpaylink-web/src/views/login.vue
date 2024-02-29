@@ -91,7 +91,7 @@ export default {
       // 验证码开关
       captchaEnabled: true,
       // 注册开关
-      register: false,
+      register: true,
       redirect: undefined
     };
   },
@@ -167,12 +167,12 @@ export default {
 .title {
   margin: 0px auto 30px auto;
   text-align: center;
-  color: #707070;
+  color: #FFFFFF;
 }
 
 .login-form {
   border-radius: 6px;
-  background: #ffffff;
+  background: rgb(245,245,245,0.5);
   width: 400px;
   padding: 25px 25px 5px 25px;
   .el-input {
