@@ -1,0 +1,2 @@
+INSERT INTO `cp_transactions` (`transaction_id`, `vehicle_id`, `entry_time`, `exit_time`, `distance`, `toll_amount`, `payment_status`, `toll_booth_id`) VALUES (4, 1, '2024-03-03 01:03:00', '2024-03-03 02:04:02', 1, 1.00, 'paid', 1);
+INSERT INTO `cp_transactions` (`transaction_id`, `vehicle_id`, `entry_time`, `exit_time`, `distance`, `toll_amount`, `payment_status`, `toll_booth_id`) VALUES (5, 1, '2024-03-03 08:00:43', '2024-03-03 08:00:45', 2, 2.00, 'payment_failed', 1);

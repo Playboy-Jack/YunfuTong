@@ -1,0 +1,1 @@
+INSERT INTO `cp_cheatingrecords` (`record_id`, `transaction_id`, `cheating_type`, `detection_time`, `handling_status`, `handling_details`) VALUES (3, 4, 'overspeed', '2024-03-03 00:00:00', 'processing', '超速行驶\n');
