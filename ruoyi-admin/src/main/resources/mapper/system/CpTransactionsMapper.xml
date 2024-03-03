@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CpTransactionsMapper">
+    
+    <resultMap type="CpTransactions" id="CpTransactionsResult">
+        <result property="transactionId"    column="transaction_id"    />
+        <result property="vehicleId"    column="vehicle_id"    />
+        <result property="entryTime"    column="entry_time"    />
+        <result property="exitTime"    column="exit_time"    />
+        <result property="distance"    column="distance"    />
+        <result property="tollAmount"    column="toll_amount"    />
+        <result property="paymentStatus"    column="payment_status"    />
+        <result property="tollBoothId"    column="toll_booth_id"    />
+    </resultMap>
+
+    <sql id="selectCpTransactionsVo">
+        select transaction_id, vehicle_id, entry_time, exit_time, distance, toll_amount, payment_status, toll_booth_id from cp_transactions
+    </sql>
+
+    <select id="selectCpTransactionsList" parameterType="CpTransactions" resultMap="CpTransactionsResult">
+        <include refid="selectCpTransactionsVo"/>
+        <where>  
+            <if test="vehicleId != null "> and vehicle_id = #{vehicleId}</if>
+            <if test="entryTime != null "> and entry_time = #{entryTime}</if>
+            <if test="exitTime != null "> and exit_time = #{exitTime}</if>
+            <if test="distance != null "> and distance = #{distance}</if>
+            <if test="tollAmount != null "> and toll_amount = #{tollAmount}</if>
+            <if test="paymentStatus != null  and paymentStatus != ''"> and payment_status = #{paymentStatus}</if>
+            <if test="tollBoothId != null "> and toll_booth_id = #{tollBoothId}</if>
+        </where>
+    </select>
+    
+    <select id="selectCpTransactionsByTransactionId" parameterType="Long" resultMap="CpTransactionsResult">
+        <include refid="selectCpTransactionsVo"/>
+        where transaction_id = #{transactionId}
+    </select>
+        
+    <insert id="insertCpTransactions" parameterType="CpTransactions" useGeneratedKeys="true" keyProperty="transactionId">
+        insert into cp_transactions
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="vehicleId != null">vehicle_id,</if>
+            <if test="entryTime != null">entry_time,</if>
+            <if test="exitTime != null">exit_time,</if>
+            <if test="distance != null">distance,</if>
+            <if test="tollAmount != null">toll_amount,</if>
+            <if test="paymentStatus != null">payment_status,</if>
+            <if test="tollBoothId != null">toll_booth_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="vehicleId != null">#{vehicleId},</if>
+            <if test="entryTime != null">#{entryTime},</if>
+            <if test="exitTime != null">#{exitTime},</if>
+            <if test="distance != null">#{distance},</if>
+            <if test="tollAmount != null">#{tollAmount},</if>
+            <if test="paymentStatus != null">#{paymentStatus},</if>
+            <if test="tollBoothId != null">#{tollBoothId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCpTransactions" parameterType="CpTransactions">
+        update cp_transactions
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vehicleId != null">vehicle_id = #{vehicleId},</if>
+            <if test="entryTime != null">entry_time = #{entryTime},</if>
+            <if test="exitTime != null">exit_time = #{exitTime},</if>
+            <if test="distance != null">distance = #{distance},</if>
+            <if test="tollAmount != null">toll_amount = #{tollAmount},</if>
+            <if test="paymentStatus != null">payment_status = #{paymentStatus},</if>
+            <if test="tollBoothId != null">toll_booth_id = #{tollBoothId},</if>
+        </trim>
+        where transaction_id = #{transactionId}
+    </update>
+
+    <delete id="deleteCpTransactionsByTransactionId" parameterType="Long">
+        delete from cp_transactions where transaction_id = #{transactionId}
+    </delete>
+
+    <delete id="deleteCpTransactionsByTransactionIds" parameterType="String">
+        delete from cp_transactions where transaction_id in 
+        <foreach item="transactionId" collection="array" open="(" separator="," close=")">
+            #{transactionId}
+        </foreach>
+    </delete>
+</mapper>

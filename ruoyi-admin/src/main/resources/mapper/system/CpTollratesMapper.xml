@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CpTollratesMapper">
+    
+    <resultMap type="CpTollrates" id="CpTollratesResult">
+        <result property="rateId"    column="rate_id"    />
+        <result property="vehicleType"    column="vehicle_type"    />
+        <result property="tollboothId"    column="tollbooth_id"    />
+        <result property="baseFee"    column="base_fee"    />
+        <result property="perKilometerFee"    column="per_kilometer_fee"    />
+        <result property="validFrom"    column="valid_from"    />
+        <result property="validTo"    column="valid_to"    />
+    </resultMap>
+
+    <sql id="selectCpTollratesVo">
+        select rate_id, vehicle_type, tollbooth_id, base_fee, per_kilometer_fee, valid_from, valid_to from cp_tollrates
+    </sql>
+
+    <select id="selectCpTollratesList" parameterType="CpTollrates" resultMap="CpTollratesResult">
+        <include refid="selectCpTollratesVo"/>
+        <where>  
+            <if test="vehicleType != null  and vehicleType != ''"> and vehicle_type = #{vehicleType}</if>
+            <if test="tollboothId != null "> and tollbooth_id = #{tollboothId}</if>
+            <if test="baseFee != null "> and base_fee = #{baseFee}</if>
+            <if test="perKilometerFee != null "> and per_kilometer_fee = #{perKilometerFee}</if>
+            <if test="validFrom != null "> and valid_from = #{validFrom}</if>
+            <if test="validTo != null "> and valid_to = #{validTo}</if>
+        </where>
+    </select>
+    
+    <select id="selectCpTollratesByRateId" parameterType="Long" resultMap="CpTollratesResult">
+        <include refid="selectCpTollratesVo"/>
+        where rate_id = #{rateId}
+    </select>
+        
+    <insert id="insertCpTollrates" parameterType="CpTollrates" useGeneratedKeys="true" keyProperty="rateId">
+        insert into cp_tollrates
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="vehicleType != null and vehicleType != ''">vehicle_type,</if>
+            <if test="tollboothId != null">tollbooth_id,</if>
+            <if test="baseFee != null">base_fee,</if>
+            <if test="perKilometerFee != null">per_kilometer_fee,</if>
+            <if test="validFrom != null">valid_from,</if>
+            <if test="validTo != null">valid_to,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="vehicleType != null and vehicleType != ''">#{vehicleType},</if>
+            <if test="tollboothId != null">#{tollboothId},</if>
+            <if test="baseFee != null">#{baseFee},</if>
+            <if test="perKilometerFee != null">#{perKilometerFee},</if>
+            <if test="validFrom != null">#{validFrom},</if>
+            <if test="validTo != null">#{validTo},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCpTollrates" parameterType="CpTollrates">
+        update cp_tollrates
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vehicleType != null and vehicleType != ''">vehicle_type = #{vehicleType},</if>
+            <if test="tollboothId != null">tollbooth_id = #{tollboothId},</if>
+            <if test="baseFee != null">base_fee = #{baseFee},</if>
+            <if test="perKilometerFee != null">per_kilometer_fee = #{perKilometerFee},</if>
+            <if test="validFrom != null">valid_from = #{validFrom},</if>
+            <if test="validTo != null">valid_to = #{validTo},</if>
+        </trim>
+        where rate_id = #{rateId}
+    </update>
+
+    <delete id="deleteCpTollratesByRateId" parameterType="Long">
+        delete from cp_tollrates where rate_id = #{rateId}
+    </delete>
+
+    <delete id="deleteCpTollratesByRateIds" parameterType="String">
+        delete from cp_tollrates where rate_id in 
+        <foreach item="rateId" collection="array" open="(" separator="," close=")">
+            #{rateId}
+        </foreach>
+    </delete>
+</mapper>

@@ -9,99 +9,99 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 车辆信息对象 cp_vehicles
  * 
  * @author ruoyi
- * @date 2024-02-26
+ * @date 2024-03-03
  */
 public class CpVehicles extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** 车辆ID */
-    private Long VehicleID;
+    private Long vehicleId;
 
-    /** 用户ID，外键关联到用户表的UserID */
-    @Excel(name = "用户ID，外键关联到用户表的UserID")
-    private Long UserID;
+    /** 用户ID */
+    @Excel(name = "用户ID")
+    private Long userId;
 
-    /** 车牌号，唯一 */
-    @Excel(name = "车牌号，唯一")
-    private String LicensePlate;
+    /** 车牌号 */
+    @Excel(name = "车牌号")
+    private String licensePlate;
 
     /** 车辆类型 */
     @Excel(name = "车辆类型")
-    private String VehicleType;
+    private String vehicleType;
 
     /** 车辆品牌 */
     @Excel(name = "车辆品牌")
-    private String VehicleBrand;
+    private String vehicleBrand;
 
     /** 车辆型号 */
     @Excel(name = "车辆型号")
-    private String VehicleModel;
+    private String vehicleModel;
 
-    public void setVehicleID(Long VehicleID) 
+    public void setVehicleId(Long vehicleId) 
     {
-        this.VehicleID = VehicleID;
-    }
-
-    public Long getVehicleID() 
-    {
-        return VehicleID;
-    }
-    public void setUserID(Long UserID) 
-    {
-        this.UserID = UserID;
+        this.vehicleId = vehicleId;
     }
 
-    public Long getUserID() 
+    public Long getVehicleId() 
     {
-        return UserID;
+        return vehicleId;
     }
-    public void setLicensePlate(String LicensePlate) 
+    public void setUserId(Long userId) 
     {
-        this.LicensePlate = LicensePlate;
+        this.userId = userId;
+    }
+
+    public Long getUserId() 
+    {
+        return userId;
+    }
+    public void setLicensePlate(String licensePlate) 
+    {
+        this.licensePlate = licensePlate;
     }
 
     public String getLicensePlate() 
     {
-        return LicensePlate;
+        return licensePlate;
     }
-    public void setVehicleType(String VehicleType) 
+    public void setVehicleType(String vehicleType) 
     {
-        this.VehicleType = VehicleType;
+        this.vehicleType = vehicleType;
     }
 
     public String getVehicleType() 
     {
-        return VehicleType;
+        return vehicleType;
     }
-    public void setVehicleBrand(String VehicleBrand) 
+    public void setVehicleBrand(String vehicleBrand) 
     {
-        this.VehicleBrand = VehicleBrand;
+        this.vehicleBrand = vehicleBrand;
     }
 
     public String getVehicleBrand() 
     {
-        return VehicleBrand;
+        return vehicleBrand;
     }
-    public void setVehicleModel(String VehicleModel) 
+    public void setVehicleModel(String vehicleModel) 
     {
-        this.VehicleModel = VehicleModel;
+        this.vehicleModel = vehicleModel;
     }
 
     public String getVehicleModel() 
     {
-        return VehicleModel;
+        return vehicleModel;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("VehicleID", getVehicleID())
-            .append("UserID", getUserID())
-            .append("LicensePlate", getLicensePlate())
-            .append("VehicleType", getVehicleType())
-            .append("VehicleBrand", getVehicleBrand())
-            .append("VehicleModel", getVehicleModel())
+            .append("vehicleId", getVehicleId())
+            .append("userId", getUserId())
+            .append("licensePlate", getLicensePlate())
+            .append("vehicleType", getVehicleType())
+            .append("vehicleBrand", getVehicleBrand())
+            .append("vehicleModel", getVehicleModel())
             .toString();
     }
 }

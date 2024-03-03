@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CpTollboothsMapper">
+    
+    <resultMap type="CpTollbooths" id="CpTollboothsResult">
+        <result property="tollboothId"    column="tollbooth_id"    />
+        <result property="tollboothName"    column="tollbooth_name"    />
+        <result property="location"    column="location"    />
+        <result property="operationalStatus"    column="operational_status"    />
+    </resultMap>
+
+    <sql id="selectCpTollboothsVo">
+        select tollbooth_id, tollbooth_name, location, operational_status from cp_tollbooths
+    </sql>
+
+    <select id="selectCpTollboothsList" parameterType="CpTollbooths" resultMap="CpTollboothsResult">
+        <include refid="selectCpTollboothsVo"/>
+        <where>  
+            <if test="tollboothName != null  and tollboothName != ''"> and tollbooth_name like concat('%', #{tollboothName}, '%')</if>
+            <if test="location != null  and location != ''"> and location = #{location}</if>
+            <if test="operationalStatus != null  and operationalStatus != ''"> and operational_status = #{operationalStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectCpTollboothsByTollboothId" parameterType="Long" resultMap="CpTollboothsResult">
+        <include refid="selectCpTollboothsVo"/>
+        where tollbooth_id = #{tollboothId}
+    </select>
+        
+    <insert id="insertCpTollbooths" parameterType="CpTollbooths" useGeneratedKeys="true" keyProperty="tollboothId">
+        insert into cp_tollbooths
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tollboothName != null">tollbooth_name,</if>
+            <if test="location != null">location,</if>
+            <if test="operationalStatus != null">operational_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tollboothName != null">#{tollboothName},</if>
+            <if test="location != null">#{location},</if>
+            <if test="operationalStatus != null">#{operationalStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCpTollbooths" parameterType="CpTollbooths">
+        update cp_tollbooths
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tollboothName != null">tollbooth_name = #{tollboothName},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="operationalStatus != null">operational_status = #{operationalStatus},</if>
+        </trim>
+        where tollbooth_id = #{tollboothId}
+    </update>
+
+    <delete id="deleteCpTollboothsByTollboothId" parameterType="Long">
+        delete from cp_tollbooths where tollbooth_id = #{tollboothId}
+    </delete>
+
+    <delete id="deleteCpTollboothsByTollboothIds" parameterType="String">
+        delete from cp_tollbooths where tollbooth_id in 
+        <foreach item="tollboothId" collection="array" open="(" separator="," close=")">
+            #{tollboothId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,47 +1,31 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="用户ID" prop="userId">
+      <el-form-item label="收费站名" prop="tollboothName">
         <el-input
-          v-model="queryParams.userId"
-          placeholder="请输入用户ID"
+          v-model="queryParams.tollboothName"
+          placeholder="请输入收费站名"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="车牌号" prop="licensePlate">
+      <el-form-item label="收费站位置" prop="location" label-width="85px">
         <el-input
-          v-model="queryParams.licensePlate"
-          placeholder="请输入车牌号"
+          v-model="queryParams.location"
+          placeholder="请输入收费站位置"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="车辆类型" prop="vehicleType">
-        <el-select v-model="queryParams.vehicleType" placeholder="请选择车辆类型" clearable>
+      <el-form-item label="运营状态" prop="operationalStatus">
+        <el-select v-model="queryParams.operationalStatus" placeholder="请选择运营状态" clearable>
           <el-option
-            v-for="dict in dict.type.vehicletype"
+            v-for="dict in dict.type.operationalstatus"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="车辆品牌" prop="vehicleBrand">
-        <el-input
-          v-model="queryParams.vehicleBrand"
-          placeholder="请输入车辆品牌"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="车辆型号" prop="vehicleModel">
-        <el-input
-          v-model="queryParams.vehicleModel"
-          placeholder="请输入车辆型号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -57,7 +41,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:vehicles:add']"
+          v-hasPermi="['system:tollbooths:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -68,7 +52,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:vehicles:edit']"
+          v-hasPermi="['system:tollbooths:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -79,7 +63,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:vehicles:remove']"
+          v-hasPermi="['system:tollbooths:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -89,24 +73,22 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:vehicles:export']"
+          v-hasPermi="['system:tollbooths:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="vehiclesList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="tollboothsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="车辆ID" align="center" prop="vehicleId" />
-      <el-table-column label="用户ID" align="center" prop="userId" />
-      <el-table-column label="车牌号" align="center" prop="licensePlate" />
-      <el-table-column label="车辆类型" align="center" prop="vehicleType">
+      <el-table-column label="收费站ID" align="center" prop="tollboothId" />
+      <el-table-column label="收费站名" align="center" prop="tollboothName" />
+      <el-table-column label="收费站位置" align="center" prop="location" />
+      <el-table-column label="运营状态" align="center" prop="operationalStatus">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.vehicletype" :value="scope.row.vehicleType"/>
+          <dict-tag :options="dict.type.operationalstatus" :value="scope.row.operationalStatus"/>
         </template>
       </el-table-column>
-      <el-table-column label="车辆品牌" align="center" prop="vehicleBrand" />
-      <el-table-column label="车辆型号" align="center" prop="vehicleModel" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -114,19 +96,19 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:vehicles:edit']"
+            v-hasPermi="['system:tollbooths:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:vehicles:remove']"
+            v-hasPermi="['system:tollbooths:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -135,30 +117,23 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改车辆信息对话框 -->
+    <!-- 添加或修改收费站管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="用户ID" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户ID" />
+        <el-form-item label="收费站名" prop="tollboothName">
+          <el-input v-model="form.tollboothName" placeholder="请输入收费站名" />
         </el-form-item>
-        <el-form-item label="车牌号" prop="licensePlate">
-          <el-input v-model="form.licensePlate" placeholder="请输入车牌号" />
+        <el-form-item label="收费站位置" prop="location" label-width="85px">
+          <el-input v-model="form.location" placeholder="请输入收费站位置" />
         </el-form-item>
-        <el-form-item label="车辆类型" prop="vehicleType">
-          <el-select v-model="form.vehicleType" placeholder="请选择车辆类型">
-            <el-option
-              v-for="dict in dict.type.vehicletype"
+        <el-form-item label="运营状态" prop="operationalStatus">
+          <el-radio-group v-model="form.operationalStatus">
+            <el-radio
+              v-for="dict in dict.type.operationalstatus"
               :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="车辆品牌" prop="vehicleBrand">
-          <el-input v-model="form.vehicleBrand" placeholder="请输入车辆品牌" />
-        </el-form-item>
-        <el-form-item label="车辆型号" prop="vehicleModel">
-          <el-input v-model="form.vehicleModel" placeholder="请输入车辆型号" />
+              :label="dict.value"
+            >{{dict.label}}</el-radio>
+          </el-radio-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -170,11 +145,11 @@
 </template>
 
 <script>
-import { listVehicles, getVehicles, delVehicles, addVehicles, updateVehicles } from "@/api/system/vehicles";
+import { listTollbooths, getTollbooths, delTollbooths, addTollbooths, updateTollbooths } from "@/api/system/tollbooths";
 
 export default {
-  name: "Vehicles",
-  dicts: ['vehicletype'],
+  name: "Tollbooths",
+  dicts: ['operationalstatus'],
   data() {
     return {
       // 遮罩层
@@ -189,8 +164,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 车辆信息表格数据
-      vehiclesList: [],
+      // 收费站管理表格数据
+      tollboothsList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -199,22 +174,14 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        userId: null,
-        licensePlate: null,
-        vehicleType: null,
-        vehicleBrand: null,
-        vehicleModel: null
+        tollboothName: null,
+        location: null,
+        operationalStatus: null
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        userId: [
-          { required: true, message: "用户ID不能为空", trigger: "blur" }
-        ],
-        licensePlate: [
-          { required: true, message: "车牌号不能为空", trigger: "blur" }
-        ],
       }
     };
   },
@@ -222,11 +189,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询车辆信息列表 */
+    /** 查询收费站管理列表 */
     getList() {
       this.loading = true;
-      listVehicles(this.queryParams).then(response => {
-        this.vehiclesList = response.rows;
+      listTollbooths(this.queryParams).then(response => {
+        this.tollboothsList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -239,12 +206,10 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        vehicleId: null,
-        userId: null,
-        licensePlate: null,
-        vehicleType: null,
-        vehicleBrand: null,
-        vehicleModel: null
+        tollboothId: null,
+        tollboothName: null,
+        location: null,
+        operationalStatus: null
       };
       this.resetForm("form");
     },
@@ -260,7 +225,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.vehicleId)
+      this.ids = selection.map(item => item.tollboothId)
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
@@ -268,30 +233,30 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加车辆信息";
+      this.title = "添加收费站管理";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const vehicleId = row.vehicleId || this.ids
-      getVehicles(vehicleId).then(response => {
+      const tollboothId = row.tollboothId || this.ids
+      getTollbooths(tollboothId).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改车辆信息";
+        this.title = "修改收费站管理";
       });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.vehicleId != null) {
-            updateVehicles(this.form).then(response => {
+          if (this.form.tollboothId != null) {
+            updateTollbooths(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addVehicles(this.form).then(response => {
+            addTollbooths(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -302,9 +267,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const vehicleIds = row.vehicleId || this.ids;
-      this.$modal.confirm('是否确认删除车辆信息编号为"' + vehicleIds + '"的数据项？').then(function() {
-        return delVehicles(vehicleIds);
+      const tollboothIds = row.tollboothId || this.ids;
+      this.$modal.confirm('是否确认删除收费站管理编号为"' + tollboothIds + '"的数据项？').then(function() {
+        return delTollbooths(tollboothIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -312,9 +277,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('system/vehicles/export', {
+      this.download('system/tollbooths/export', {
         ...this.queryParams
-      }, `vehicles_${new Date().getTime()}.xlsx`)
+      }, `tollbooths_${new Date().getTime()}.xlsx`)
     }
   }
 };

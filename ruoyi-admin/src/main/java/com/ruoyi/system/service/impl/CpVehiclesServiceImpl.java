@@ -11,7 +11,7 @@ import com.ruoyi.system.service.ICpVehiclesService;
  * 车辆信息Service业务层处理
  * 
  * @author ruoyi
- * @date 2024-02-26
+ * @date 2024-03-03
  */
 @Service
 public class CpVehiclesServiceImpl implements ICpVehiclesService 
@@ -22,13 +22,13 @@ public class CpVehiclesServiceImpl implements ICpVehiclesService
     /**
      * 查询车辆信息
      * 
-     * @param VehicleID 车辆信息主键
+     * @param vehicleId 车辆信息主键
      * @return 车辆信息
      */
     @Override
-    public CpVehicles selectCpVehiclesByVehicleID(Long VehicleID)
+    public CpVehicles selectCpVehiclesByVehicleId(Long vehicleId)
     {
-        return cpVehiclesMapper.selectCpVehiclesByVehicleID(VehicleID);
+        return cpVehiclesMapper.selectCpVehiclesByVehicleId(vehicleId);
     }
 
     /**
@@ -70,24 +70,24 @@ public class CpVehiclesServiceImpl implements ICpVehiclesService
     /**
      * 批量删除车辆信息
      * 
-     * @param VehicleIDs 需要删除的车辆信息主键
+     * @param vehicleIds 需要删除的车辆信息主键
      * @return 结果
      */
     @Override
-    public int deleteCpVehiclesByVehicleIDs(Long[] VehicleIDs)
+    public int deleteCpVehiclesByVehicleIds(Long[] vehicleIds)
     {
-        return cpVehiclesMapper.deleteCpVehiclesByVehicleIDs(VehicleIDs);
+        return cpVehiclesMapper.deleteCpVehiclesByVehicleIds(vehicleIds);
     }
 
     /**
      * 删除车辆信息信息
      * 
-     * @param VehicleID 车辆信息主键
+     * @param vehicleId 车辆信息主键
      * @return 结果
      */
     @Override
-    public int deleteCpVehiclesByVehicleID(Long VehicleID)
+    public int deleteCpVehiclesByVehicleId(Long vehicleId)
     {
-        return cpVehiclesMapper.deleteCpVehiclesByVehicleID(VehicleID);
+        return cpVehiclesMapper.deleteCpVehiclesByVehicleId(vehicleId);
     }
 }

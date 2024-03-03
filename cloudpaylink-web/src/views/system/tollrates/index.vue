@@ -1,22 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="用户ID" prop="userId">
-        <el-input
-          v-model="queryParams.userId"
-          placeholder="请输入用户ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="车牌号" prop="licensePlate">
-        <el-input
-          v-model="queryParams.licensePlate"
-          placeholder="请输入车牌号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="车辆类型" prop="vehicleType">
         <el-select v-model="queryParams.vehicleType" placeholder="请选择车辆类型" clearable>
           <el-option
@@ -27,21 +11,45 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="车辆品牌" prop="vehicleBrand">
+      <el-form-item label="收费站ID" prop="tollboothId">
         <el-input
-          v-model="queryParams.vehicleBrand"
-          placeholder="请输入车辆品牌"
+          v-model="queryParams.tollboothId"
+          placeholder="请输入收费站ID"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="车辆型号" prop="vehicleModel">
+      <el-form-item label="车次基础费用" prop="baseFee">
         <el-input
-          v-model="queryParams.vehicleModel"
-          placeholder="请输入车辆型号"
+          v-model="queryParams.baseFee"
+          placeholder="请输入车次基础费用"
           clearable
           @keyup.enter.native="handleQuery"
         />
+      </el-form-item>
+      <el-form-item label="每公里费用" prop="perKilometerFee">
+        <el-input
+          v-model="queryParams.perKilometerFee"
+          placeholder="请输入每公里费用"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="费率生效日期" prop="validFrom">
+        <el-date-picker clearable
+          v-model="queryParams.validFrom"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="请选择费率生效日期">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="费率截止日期" prop="validTo">
+        <el-date-picker clearable
+          v-model="queryParams.validTo"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="请选择费率截止日期">
+        </el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -57,7 +65,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:vehicles:add']"
+          v-hasPermi="['system:tollrates:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -68,7 +76,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:vehicles:edit']"
+          v-hasPermi="['system:tollrates:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -79,7 +87,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:vehicles:remove']"
+          v-hasPermi="['system:tollrates:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -89,24 +97,33 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:vehicles:export']"
+          v-hasPermi="['system:tollrates:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="vehiclesList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="tollratesList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="车辆ID" align="center" prop="vehicleId" />
-      <el-table-column label="用户ID" align="center" prop="userId" />
-      <el-table-column label="车牌号" align="center" prop="licensePlate" />
+      <el-table-column label="费率ID" align="center" prop="rateId" />
       <el-table-column label="车辆类型" align="center" prop="vehicleType">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.vehicletype" :value="scope.row.vehicleType"/>
         </template>
       </el-table-column>
-      <el-table-column label="车辆品牌" align="center" prop="vehicleBrand" />
-      <el-table-column label="车辆型号" align="center" prop="vehicleModel" />
+      <el-table-column label="收费站ID" align="center" prop="tollboothId" />
+      <el-table-column label="车次基础费用" align="center" prop="baseFee" />
+      <el-table-column label="每公里费用" align="center" prop="perKilometerFee" />
+      <el-table-column label="费率生效日期" align="center" prop="validFrom" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.validFrom, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="费率截止日期" align="center" prop="validTo" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.validTo, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -114,14 +131,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:vehicles:edit']"
+            v-hasPermi="['system:tollrates:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:vehicles:remove']"
+            v-hasPermi="['system:tollrates:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -135,15 +152,9 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改车辆信息对话框 -->
+    <!-- 添加或修改收费标准对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="用户ID" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户ID" />
-        </el-form-item>
-        <el-form-item label="车牌号" prop="licensePlate">
-          <el-input v-model="form.licensePlate" placeholder="请输入车牌号" />
-        </el-form-item>
         <el-form-item label="车辆类型" prop="vehicleType">
           <el-select v-model="form.vehicleType" placeholder="请选择车辆类型">
             <el-option
@@ -154,11 +165,30 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="车辆品牌" prop="vehicleBrand">
-          <el-input v-model="form.vehicleBrand" placeholder="请输入车辆品牌" />
+        <el-form-item label="收费站ID" prop="tollboothId">
+          <el-input v-model="form.tollboothId" placeholder="请输入收费站ID" />
         </el-form-item>
-        <el-form-item label="车辆型号" prop="vehicleModel">
-          <el-input v-model="form.vehicleModel" placeholder="请输入车辆型号" />
+        <el-form-item label="车次基础费用" prop="baseFee">
+          <el-input v-model="form.baseFee" placeholder="请输入车次基础费用" />
+        </el-form-item>
+        <el-form-item label="每公里费用" prop="perKilometerFee">
+          <el-input v-model="form.perKilometerFee" placeholder="请输入每公里费用" />
+        </el-form-item>
+        <el-form-item label="费率生效日期" prop="validFrom">
+          <el-date-picker clearable
+            v-model="form.validFrom"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="请选择费率生效日期">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="费率截止日期" prop="validTo">
+          <el-date-picker clearable
+            v-model="form.validTo"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="请选择费率截止日期">
+          </el-date-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -170,10 +200,10 @@
 </template>
 
 <script>
-import { listVehicles, getVehicles, delVehicles, addVehicles, updateVehicles } from "@/api/system/vehicles";
+import { listTollrates, getTollrates, delTollrates, addTollrates, updateTollrates } from "@/api/system/tollrates";
 
 export default {
-  name: "Vehicles",
+  name: "Tollrates",
   dicts: ['vehicletype'],
   data() {
     return {
@@ -189,8 +219,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 车辆信息表格数据
-      vehiclesList: [],
+      // 收费标准表格数据
+      tollratesList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -199,21 +229,22 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        userId: null,
-        licensePlate: null,
         vehicleType: null,
-        vehicleBrand: null,
-        vehicleModel: null
+        tollboothId: null,
+        baseFee: null,
+        perKilometerFee: null,
+        validFrom: null,
+        validTo: null
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        userId: [
-          { required: true, message: "用户ID不能为空", trigger: "blur" }
+        vehicleType: [
+          { required: true, message: "车辆类型不能为空", trigger: "change" }
         ],
-        licensePlate: [
-          { required: true, message: "车牌号不能为空", trigger: "blur" }
+        tollboothId: [
+          { required: true, message: "收费站ID不能为空", trigger: "blur" }
         ],
       }
     };
@@ -222,11 +253,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询车辆信息列表 */
+    /** 查询收费标准列表 */
     getList() {
       this.loading = true;
-      listVehicles(this.queryParams).then(response => {
-        this.vehiclesList = response.rows;
+      listTollrates(this.queryParams).then(response => {
+        this.tollratesList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -239,12 +270,13 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        vehicleId: null,
-        userId: null,
-        licensePlate: null,
+        rateId: null,
         vehicleType: null,
-        vehicleBrand: null,
-        vehicleModel: null
+        tollboothId: null,
+        baseFee: null,
+        perKilometerFee: null,
+        validFrom: null,
+        validTo: null
       };
       this.resetForm("form");
     },
@@ -260,7 +292,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.vehicleId)
+      this.ids = selection.map(item => item.rateId)
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
@@ -268,30 +300,30 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加车辆信息";
+      this.title = "添加收费标准";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const vehicleId = row.vehicleId || this.ids
-      getVehicles(vehicleId).then(response => {
+      const rateId = row.rateId || this.ids
+      getTollrates(rateId).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改车辆信息";
+        this.title = "修改收费标准";
       });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.vehicleId != null) {
-            updateVehicles(this.form).then(response => {
+          if (this.form.rateId != null) {
+            updateTollrates(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addVehicles(this.form).then(response => {
+            addTollrates(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -302,9 +334,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const vehicleIds = row.vehicleId || this.ids;
-      this.$modal.confirm('是否确认删除车辆信息编号为"' + vehicleIds + '"的数据项？').then(function() {
-        return delVehicles(vehicleIds);
+      const rateIds = row.rateId || this.ids;
+      this.$modal.confirm('是否确认删除收费标准编号为"' + rateIds + '"的数据项？').then(function() {
+        return delTollrates(rateIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -312,9 +344,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('system/vehicles/export', {
+      this.download('system/tollrates/export', {
         ...this.queryParams
-      }, `vehicles_${new Date().getTime()}.xlsx`)
+      }, `tollrates_${new Date().getTime()}.xlsx`)
     }
   }
 };

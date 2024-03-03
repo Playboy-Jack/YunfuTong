@@ -7,17 +7,17 @@ import com.ruoyi.system.domain.CpVehicles;
  * 车辆信息Service接口
  * 
  * @author ruoyi
- * @date 2024-02-26
+ * @date 2024-03-03
  */
 public interface ICpVehiclesService 
 {
     /**
      * 查询车辆信息
      * 
-     * @param VehicleID 车辆信息主键
+     * @param vehicleId 车辆信息主键
      * @return 车辆信息
      */
-    public CpVehicles selectCpVehiclesByVehicleID(Long VehicleID);
+    public CpVehicles selectCpVehiclesByVehicleId(Long vehicleId);
 
     /**
      * 查询车辆信息列表
@@ -46,16 +46,16 @@ public interface ICpVehiclesService
     /**
      * 批量删除车辆信息
      * 
-     * @param VehicleIDs 需要删除的车辆信息主键集合
+     * @param vehicleIds 需要删除的车辆信息主键集合
      * @return 结果
      */
-    public int deleteCpVehiclesByVehicleIDs(Long[] VehicleIDs);
+    public int deleteCpVehiclesByVehicleIds(Long[] vehicleIds);
 
     /**
      * 删除车辆信息信息
      * 
-     * @param VehicleID 车辆信息主键
+     * @param vehicleId 车辆信息主键
      * @return 结果
      */
-    public int deleteCpVehiclesByVehicleID(Long VehicleID);
+    public int deleteCpVehiclesByVehicleId(Long vehicleId);
 }

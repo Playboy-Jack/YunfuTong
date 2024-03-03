@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CpFeedbackMapper">
+    
+    <resultMap type="CpFeedback" id="CpFeedbackResult">
+        <result property="feedbackId"    column="feedback_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="feedbackText"    column="feedback_text"    />
+        <result property="timestamp"    column="timestamp"    />
+    </resultMap>
+
+    <sql id="selectCpFeedbackVo">
+        select feedback_id, user_id, feedback_text, timestamp from cp_feedback
+    </sql>
+
+    <select id="selectCpFeedbackList" parameterType="CpFeedback" resultMap="CpFeedbackResult">
+        <include refid="selectCpFeedbackVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="feedbackText != null  and feedbackText != ''"> and feedback_text = #{feedbackText}</if>
+            <if test="timestamp != null "> and timestamp = #{timestamp}</if>
+        </where>
+    </select>
+    
+    <select id="selectCpFeedbackByFeedbackId" parameterType="Long" resultMap="CpFeedbackResult">
+        <include refid="selectCpFeedbackVo"/>
+        where feedback_id = #{feedbackId}
+    </select>
+        
+    <insert id="insertCpFeedback" parameterType="CpFeedback" useGeneratedKeys="true" keyProperty="feedbackId">
+        insert into cp_feedback
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="feedbackText != null">feedback_text,</if>
+            <if test="timestamp != null">timestamp,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="feedbackText != null">#{feedbackText},</if>
+            <if test="timestamp != null">#{timestamp},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCpFeedback" parameterType="CpFeedback">
+        update cp_feedback
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="feedbackText != null">feedback_text = #{feedbackText},</if>
+            <if test="timestamp != null">timestamp = #{timestamp},</if>
+        </trim>
+        where feedback_id = #{feedbackId}
+    </update>
+
+    <delete id="deleteCpFeedbackByFeedbackId" parameterType="Long">
+        delete from cp_feedback where feedback_id = #{feedbackId}
+    </delete>
+
+    <delete id="deleteCpFeedbackByFeedbackIds" parameterType="String">
+        delete from cp_feedback where feedback_id in 
+        <foreach item="feedbackId" collection="array" open="(" separator="," close=")">
+            #{feedbackId}
+        </foreach>
+    </delete>
+</mapper>

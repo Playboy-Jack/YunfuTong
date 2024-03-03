@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 车辆信息Controller
  * 
  * @author ruoyi
- * @date 2024-02-26
+ * @date 2024-03-03
  */
 @RestController
 @RequestMapping("/system/vehicles")
@@ -63,10 +63,10 @@ public class CpVehiclesController extends BaseController
      * 获取车辆信息详细信息
      */
     @PreAuthorize("@ss.hasPermi('system:vehicles:query')")
-    @GetMapping(value = "/{VehicleID}")
-    public AjaxResult getInfo(@PathVariable("VehicleID") Long VehicleID)
+    @GetMapping(value = "/{vehicleId}")
+    public AjaxResult getInfo(@PathVariable("vehicleId") Long vehicleId)
     {
-        return success(cpVehiclesService.selectCpVehiclesByVehicleID(VehicleID));
+        return success(cpVehiclesService.selectCpVehiclesByVehicleId(vehicleId));
     }
 
     /**
@@ -96,9 +96,9 @@ public class CpVehiclesController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:vehicles:remove')")
     @Log(title = "车辆信息", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{VehicleIDs}")
-    public AjaxResult remove(@PathVariable Long[] VehicleIDs)
+	@DeleteMapping("/{vehicleIds}")
+    public AjaxResult remove(@PathVariable Long[] vehicleIds)
     {
-        return toAjax(cpVehiclesService.deleteCpVehiclesByVehicleIDs(VehicleIDs));
+        return toAjax(cpVehiclesService.deleteCpVehiclesByVehicleIds(vehicleIds));
     }
 }

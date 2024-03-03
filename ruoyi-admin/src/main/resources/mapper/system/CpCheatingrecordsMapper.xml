@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CpCheatingrecordsMapper">
+    
+    <resultMap type="CpCheatingrecords" id="CpCheatingrecordsResult">
+        <result property="recordId"    column="record_id"    />
+        <result property="transactionId"    column="transaction_id"    />
+        <result property="cheatingType"    column="cheating_type"    />
+        <result property="detectionTime"    column="detection_time"    />
+        <result property="handlingStatus"    column="handling_status"    />
+        <result property="handlingDetails"    column="handling_details"    />
+    </resultMap>
+
+    <sql id="selectCpCheatingrecordsVo">
+        select record_id, transaction_id, cheating_type, detection_time, handling_status, handling_details from cp_cheatingrecords
+    </sql>
+
+    <select id="selectCpCheatingrecordsList" parameterType="CpCheatingrecords" resultMap="CpCheatingrecordsResult">
+        <include refid="selectCpCheatingrecordsVo"/>
+        <where>  
+            <if test="transactionId != null "> and transaction_id = #{transactionId}</if>
+            <if test="cheatingType != null  and cheatingType != ''"> and cheating_type = #{cheatingType}</if>
+            <if test="detectionTime != null "> and detection_time = #{detectionTime}</if>
+            <if test="handlingStatus != null  and handlingStatus != ''"> and handling_status = #{handlingStatus}</if>
+            <if test="handlingDetails != null  and handlingDetails != ''"> and handling_details = #{handlingDetails}</if>
+        </where>
+    </select>
+    
+    <select id="selectCpCheatingrecordsByRecordId" parameterType="Long" resultMap="CpCheatingrecordsResult">
+        <include refid="selectCpCheatingrecordsVo"/>
+        where record_id = #{recordId}
+    </select>
+        
+    <insert id="insertCpCheatingrecords" parameterType="CpCheatingrecords" useGeneratedKeys="true" keyProperty="recordId">
+        insert into cp_cheatingrecords
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="transactionId != null">transaction_id,</if>
+            <if test="cheatingType != null">cheating_type,</if>
+            <if test="detectionTime != null">detection_time,</if>
+            <if test="handlingStatus != null">handling_status,</if>
+            <if test="handlingDetails != null">handling_details,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="transactionId != null">#{transactionId},</if>
+            <if test="cheatingType != null">#{cheatingType},</if>
+            <if test="detectionTime != null">#{detectionTime},</if>
+            <if test="handlingStatus != null">#{handlingStatus},</if>
+            <if test="handlingDetails != null">#{handlingDetails},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCpCheatingrecords" parameterType="CpCheatingrecords">
+        update cp_cheatingrecords
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="transactionId != null">transaction_id = #{transactionId},</if>
+            <if test="cheatingType != null">cheating_type = #{cheatingType},</if>
+            <if test="detectionTime != null">detection_time = #{detectionTime},</if>
+            <if test="handlingStatus != null">handling_status = #{handlingStatus},</if>
+            <if test="handlingDetails != null">handling_details = #{handlingDetails},</if>
+        </trim>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deleteCpCheatingrecordsByRecordId" parameterType="Long">
+        delete from cp_cheatingrecords where record_id = #{recordId}
+    </delete>
+
+    <delete id="deleteCpCheatingrecordsByRecordIds" parameterType="String">
+        delete from cp_cheatingrecords where record_id in 
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+</mapper>

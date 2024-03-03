@@ -5,72 +5,72 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.ruoyi.system.mapper.CpVehiclesMapper">
     
     <resultMap type="CpVehicles" id="CpVehiclesResult">
-        <result property="VehicleID"    column="VehicleID"    />
-        <result property="UserID"    column="UserID"    />
-        <result property="LicensePlate"    column="LicensePlate"    />
-        <result property="VehicleType"    column="VehicleType"    />
-        <result property="VehicleBrand"    column="VehicleBrand"    />
-        <result property="VehicleModel"    column="VehicleModel"    />
+        <result property="vehicleId"    column="vehicle_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="licensePlate"    column="license_plate"    />
+        <result property="vehicleType"    column="vehicle_type"    />
+        <result property="vehicleBrand"    column="vehicle_brand"    />
+        <result property="vehicleModel"    column="vehicle_model"    />
     </resultMap>
 
     <sql id="selectCpVehiclesVo">
-        select VehicleID, UserID, LicensePlate, VehicleType, VehicleBrand, VehicleModel from cp_vehicles
+        select vehicle_id, user_id, license_plate, vehicle_type, vehicle_brand, vehicle_model from cp_vehicles
     </sql>
 
     <select id="selectCpVehiclesList" parameterType="CpVehicles" resultMap="CpVehiclesResult">
         <include refid="selectCpVehiclesVo"/>
         <where>  
-            <if test="UserID != null "> and UserID = #{UserID}</if>
-            <if test="LicensePlate != null  and LicensePlate != ''"> and LicensePlate = #{LicensePlate}</if>
-            <if test="VehicleType != null  and VehicleType != ''"> and VehicleType = #{VehicleType}</if>
-            <if test="VehicleBrand != null  and VehicleBrand != ''"> and VehicleBrand = #{VehicleBrand}</if>
-            <if test="VehicleModel != null  and VehicleModel != ''"> and VehicleModel = #{VehicleModel}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="licensePlate != null  and licensePlate != ''"> and license_plate = #{licensePlate}</if>
+            <if test="vehicleType != null  and vehicleType != ''"> and vehicle_type = #{vehicleType}</if>
+            <if test="vehicleBrand != null  and vehicleBrand != ''"> and vehicle_brand = #{vehicleBrand}</if>
+            <if test="vehicleModel != null  and vehicleModel != ''"> and vehicle_model = #{vehicleModel}</if>
         </where>
     </select>
     
-    <select id="selectCpVehiclesByVehicleID" parameterType="Long" resultMap="CpVehiclesResult">
+    <select id="selectCpVehiclesByVehicleId" parameterType="Long" resultMap="CpVehiclesResult">
         <include refid="selectCpVehiclesVo"/>
-        where VehicleID = #{VehicleID}
+        where vehicle_id = #{vehicleId}
     </select>
         
-    <insert id="insertCpVehicles" parameterType="CpVehicles" useGeneratedKeys="true" keyProperty="VehicleID">
+    <insert id="insertCpVehicles" parameterType="CpVehicles" useGeneratedKeys="true" keyProperty="vehicleId">
         insert into cp_vehicles
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="UserID != null">UserID,</if>
-            <if test="LicensePlate != null and LicensePlate != ''">LicensePlate,</if>
-            <if test="VehicleType != null">VehicleType,</if>
-            <if test="VehicleBrand != null">VehicleBrand,</if>
-            <if test="VehicleModel != null">VehicleModel,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="licensePlate != null and licensePlate != ''">license_plate,</if>
+            <if test="vehicleType != null">vehicle_type,</if>
+            <if test="vehicleBrand != null">vehicle_brand,</if>
+            <if test="vehicleModel != null">vehicle_model,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="UserID != null">#{UserID},</if>
-            <if test="LicensePlate != null and LicensePlate != ''">#{LicensePlate},</if>
-            <if test="VehicleType != null">#{VehicleType},</if>
-            <if test="VehicleBrand != null">#{VehicleBrand},</if>
-            <if test="VehicleModel != null">#{VehicleModel},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="licensePlate != null and licensePlate != ''">#{licensePlate},</if>
+            <if test="vehicleType != null">#{vehicleType},</if>
+            <if test="vehicleBrand != null">#{vehicleBrand},</if>
+            <if test="vehicleModel != null">#{vehicleModel},</if>
          </trim>
     </insert>
 
     <update id="updateCpVehicles" parameterType="CpVehicles">
         update cp_vehicles
         <trim prefix="SET" suffixOverrides=",">
-            <if test="UserID != null">UserID = #{UserID},</if>
-            <if test="LicensePlate != null and LicensePlate != ''">LicensePlate = #{LicensePlate},</if>
-            <if test="VehicleType != null">VehicleType = #{VehicleType},</if>
-            <if test="VehicleBrand != null">VehicleBrand = #{VehicleBrand},</if>
-            <if test="VehicleModel != null">VehicleModel = #{VehicleModel},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="licensePlate != null and licensePlate != ''">license_plate = #{licensePlate},</if>
+            <if test="vehicleType != null">vehicle_type = #{vehicleType},</if>
+            <if test="vehicleBrand != null">vehicle_brand = #{vehicleBrand},</if>
+            <if test="vehicleModel != null">vehicle_model = #{vehicleModel},</if>
         </trim>
-        where VehicleID = #{VehicleID}
+        where vehicle_id = #{vehicleId}
     </update>
 
-    <delete id="deleteCpVehiclesByVehicleID" parameterType="Long">
-        delete from cp_vehicles where VehicleID = #{VehicleID}
+    <delete id="deleteCpVehiclesByVehicleId" parameterType="Long">
+        delete from cp_vehicles where vehicle_id = #{vehicleId}
     </delete>
 
-    <delete id="deleteCpVehiclesByVehicleIDs" parameterType="String">
-        delete from cp_vehicles where VehicleID in 
-        <foreach item="VehicleID" collection="array" open="(" separator="," close=")">
-            #{VehicleID}
+    <delete id="deleteCpVehiclesByVehicleIds" parameterType="String">
+        delete from cp_vehicles where vehicle_id in 
+        <foreach item="vehicleId" collection="array" open="(" separator="," close=")">
+            #{vehicleId}
         </foreach>
     </delete>
 </mapper>

@@ -10,9 +10,9 @@ export function listVehicles(query) {
 }
 
 // 查询车辆信息详细
-export function getVehicles(VehicleID) {
+export function getVehicles(vehicleId) {
   return request({
-    url: '/system/vehicles/' + VehicleID,
+    url: '/system/vehicles/' + vehicleId,
     method: 'get'
   })
 }
@@ -36,9 +36,9 @@ export function updateVehicles(data) {
 }
 
 // 删除车辆信息
-export function delVehicles(VehicleID) {
+export function delVehicles(vehicleId) {
   return request({
-    url: '/system/vehicles/' + VehicleID,
+    url: '/system/vehicles/' + vehicleId,
     method: 'delete'
   })
 }
